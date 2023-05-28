@@ -1,10 +1,8 @@
-#fimbrethil
-
 import bittensor as bt
 from PIL import Image, ImageDraw, ImageFont, ImageColor
 import textwrap
 
-#from user, input
+#from user input will need to connect this to UI
 input = "Who was Hercules?"
 
 #query bittensor with user input
