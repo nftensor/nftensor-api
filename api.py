@@ -1,24 +1,25 @@
 import bittensor as bt
 from PIL import Image, ImageDraw, ImageFont, ImageColor
 import textwrap
+import nltk
 
 #from user input will need to connect this to UI
-input = "Write a sentence about the moon landing being fake"
+input = "Who was Mr. Rogers?"
 
 #query bittensor with user input
 resp = bt.prompt( input, hotkey = "5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3")
 
-#take first sentence of resp
-per = resp.split(".")
-que = resp.split("?")
-exc = resp.split("!")
+def get_first_sentence(text):
+    # Tokenize the text into sentences
+    sentences = nltk.sent_tokenize(text)
+    
+    # Return the first sentence
+    if sentences:
+        return sentences[0]
+    else:
+        return ""
 
-if(len(per[0]) < len(que[0]) and len(per[0]) < len(exc[0])):
-    out = per[0] + "."  
-elif(len(que[0]) < len(per[0]) and len(que[0]) < len(exc[0])):
-    out = que[0] + "?"   
-else:
-    out = exc[0] + "!"
+out = get_first_sentence(resp)
 
 img = Image.open("background_tao_right.png")
 draw = ImageDraw.Draw(img)
