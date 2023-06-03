@@ -4,7 +4,7 @@ from textwrap3 import wrap
 import nltk
 
 #from user input will need to connect this to UI
-input = "Who was Mr. Rogers?"
+input = "What do you know about Pericles?"
 
 #query bittensor with user input
 resp = bt.prompt( input, hotkey = "5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3")
@@ -36,8 +36,8 @@ line_spacing = 1.5
 
 while font_size > 0:
     font = ImageFont.truetype("../assets/fonts/EBGaramond-Regular.ttf", font_size)
-    wrapped_text = wrap(out, width=int(width * 0.9 / font_size), break_long_words=False)
-    line_heights = [font.getsize(line)[1] for line in wrapped_text]
+    wrapped_text = wrap(out, width=int(width * 1.5 / font_size), break_long_words=False)
+    line_heights = [draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] for line in wrapped_text]
     max_line_height = max(line_heights)
     total_height = sum(line_heights) + int((len(wrapped_text) - 1) * max_line_height * (line_spacing - 1))
 
@@ -54,7 +54,9 @@ else:
     y -= total_height // 2
 
     for line in wrapped_text:
-        line_width, line_height = font.getsize(line)
+        line_bbox = draw.textbbox((0, 0), line, font=font)
+        line_width = line_bbox[2] - line_bbox[0]
+        line_height = line_bbox[3] - line_bbox[1]
         draw.text((x - line_width // 2, y), line, fill=text_color, font=font)
         y += int(max_line_height * line_spacing)
 
