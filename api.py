@@ -1,6 +1,6 @@
 import bittensor as bt
 from PIL import Image, ImageDraw, ImageFont, ImageColor
-import textwrap
+from textwrap3 import wrap
 import nltk
 
 #from user input will need to connect this to UI
@@ -21,7 +21,7 @@ def get_first_sentence(text):
 
 out = get_first_sentence(resp)
 
-img = Image.open("background_tao_right.png")
+img = Image.open("./imgs/base/background_tao_right.png")
 draw = ImageDraw.Draw(img)
 width, height = img.size
 x = width // 2
@@ -35,8 +35,8 @@ font_size = max_font_size
 line_spacing = 1.5
 
 while font_size > 0:
-    font = ImageFont.truetype("/mnt/c/Windows/Fonts/comic.ttf", font_size)
-    wrapped_text = textwrap.wrap(out, width=int(width * 0.9 / font_size), break_long_words=False)
+    font = ImageFont.truetype("./fonts/EBGaramond-Regular.ttf", font_size)
+    wrapped_text = wrap(out, width=int(width * 0.9 / font_size), break_long_words=False)
     line_heights = [font.getsize(line)[1] for line in wrapped_text]
     max_line_height = max(line_heights)
     total_height = sum(line_heights) + int((len(wrapped_text) - 1) * max_line_height * (line_spacing - 1))
@@ -58,4 +58,4 @@ else:
         draw.text((x - line_width // 2, y), line, fill=text_color, font=font)
         y += int(max_line_height * line_spacing)
 
-    img.save("testout.png")
+    img.save("./imgs/base/testout.png")
