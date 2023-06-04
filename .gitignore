@@ -1,3 +1,4 @@
 .env
 env
-assets/out
+assets/imgs/out/
+assets/json/
