@@ -2,9 +2,13 @@ import bittensor as bt
 from PIL import Image, ImageDraw, ImageFont, ImageColor
 from textwrap3 import wrap
 import nltk
+import os
+import json 
+
+NFTENSOR_DESCRIPTION = """NFTensor Text is a generative art project that generates NFTs from the first sentence of the Bittensor network's response to minter queries""" 
 
 
-def generate_image(input):
+def generate_image(input, query_id):
     try: 
         # query bittensor with user input 
         resp = bt.prompt( input, hotkey = "5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3")
@@ -52,9 +56,9 @@ def generate_image(input):
             draw.text((x - line_width // 2, y), line, fill=text_color, font=font)
             y += int(max_line_height * line_spacing)
     
-        img.save("./assets/imgs/out/testout.png")  
+        img.save(f"./assets/imgs/out/{query_id}.png")  
     
-    
+
     
     
 def get_first_sentence(text):
@@ -66,4 +70,30 @@ def get_first_sentence(text):
         return sentences[0]
     else:
         return ""
+
+
+def image_exists(query_id):
+    return os.path.isfile(f"./assets/imgs/out/{query_id}.png")
+
+def upload_image(query_id):
+    pass
+
+def generate_json(query_id, input):
     
+    json_metadata = {
+        "name": f"NFTensor Text #{query_id}",
+        "description": query_id,
+        "image": input,
+        "attributes": [{[{"trait_type":"query","value":f"{input}"}]
+    }
+
+    with open(f"./assets/json/{query_id}.json", "w") as outfile:
+        json.dump(json_metadata, outfile)
+
+
+
+
+
+
+
+
