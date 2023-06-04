@@ -3,8 +3,16 @@ from PIL import Image, ImageDraw, ImageFont, ImageColor
 from textwrap3 import wrap
 import nltk
 
+
+
+def generate_image():
+    pass    
+
+
+
+
 #from user input will need to connect this to UI
-input = "What do you know about Pericles?"
+input = "What do you know about the capital of south korea?"
 
 #query bittensor with user input
 resp = bt.prompt( input, hotkey = "5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3")
@@ -20,8 +28,7 @@ def get_first_sentence(text):
         return ""
 
 out = get_first_sentence(resp)
-
-img = Image.open("../assets/imgs/base/background_tao_right.png")
+img = Image.open("./assets/imgs/base/background_tao_right.png")
 draw = ImageDraw.Draw(img)
 width, height = img.size
 x = width // 2
@@ -35,7 +42,7 @@ font_size = max_font_size
 line_spacing = 1.5
 
 while font_size > 0:
-    font = ImageFont.truetype("../assets/fonts/EBGaramond-Regular.ttf", font_size)
+    font = ImageFont.truetype("./assets/fonts/EBGaramond-Regular.ttf", font_size)
     wrapped_text = wrap(out, width=int(width * 1.5 / font_size), break_long_words=False)
     line_heights = [draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] for line in wrapped_text]
     max_line_height = max(line_heights)
@@ -61,4 +68,4 @@ else:
         draw.text((x - line_width // 2, y), line, fill=text_color, font=font)
         y += int(max_line_height * line_spacing)
 
-    img.save("../assets/imgs/out/testout.png")
+    img.save("./assets/imgs/out/testout.png")
