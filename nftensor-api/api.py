@@ -48,6 +48,7 @@ while font_size > 0:
 
 if font is None:
     print("Text size OOB")
+    # add error handling
     # what should we do here?
 else:
     total_height = sum(line_heights) + int((len(wrapped_text) - 1) * max_line_height * (line_spacing - 1))
