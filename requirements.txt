@@ -1,0 +1,6 @@
+bittensor
+Pillow
+textwrap3
+nltk
+pinatapy-vourhey
+web3
