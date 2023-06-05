@@ -1,6 +1,7 @@
 from web3 import Web3 
 import abi
 import generator 
+from loguru import logger
 
 # fetches queries from the NFTensor contract 
 def fetch_queries(endpoint, nftensor_address):
@@ -14,6 +15,8 @@ def fetch_queries(endpoint, nftensor_address):
         query = contract.functions.queries(i).call()
         if query != "" and not generator.image_exists(i):
             generator.generate_image(query, i)
+        else:
+            logger.info("no new queries found")
         
         
         

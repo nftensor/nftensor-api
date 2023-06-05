@@ -6,6 +6,7 @@ import os
 import json 
 from pinatapy import PinataPy
 from dotenv import load_dotenv
+from loguru import logger
 
 NFTENSOR_DESCRIPTION = """NFTensor Text is a generative art project that generates NFTs from the first sentence of the Bittensor network's response to minter queries""" 
 
@@ -58,13 +59,21 @@ def generate_image(input, query_id):
             draw.text((x - line_width // 2, y), line, fill=text_color, font=font)
             y += int(max_line_height * line_spacing)
     
-        img.save(f"./assets/imgs/out/{query_id}.png")  
+        img.save(f"./assets/imgs/out/{query_id}.png")
+        if not image_exists(query_id):
+            logger.debug(f"failed to generate image for query #{query_id}")
+        else: 
+            logger.info(f"successfully generated image for query #{query_id}")
+            generate_json(query_id, input, first_sentence)
+            upload_image(query_id)
+
+
     
 
     
     
 def get_first_sentence(text):
-# Tokenize the text into sentences
+    # Tokenize the text into sentences
     sentences = nltk.sent_tokenize(text)
 
     # Return the first sentence
@@ -79,19 +88,24 @@ def image_exists(query_id):
 
 def upload_image(query_id):
     load_dotenv()
-    api_key = os.getenv('key')
-    secret = os.getenv('secret')
-    img = open(f"./assets/json/{query_id}.json", "r")
+    api_key = os.getenv('PINATA_API_KEY')
+    secret = os.getenv('PINATA_API_SECRET_KEY')
+    image_path = os.path.abspath(f"./assets/imgs/out/{query_id}.png")
+    img = open(image_path, "r")
+    print(api_key)
+    print(secret)
     pinata = PinataPy(pinata_api_key=api_key, pinata_secret_api_key=secret)
-    pinata.pin_file_to_ipfs(img)
+    pinata_response =  pinata.pin_file_to_ipfs(image_path)
+    print(pinata_response)
+    return pinata_response
 
-def generate_json(query_id, input):
+def generate_json(query_id, input, response):
     
     json_metadata = {
         "name": f"NFTensor Text #{query_id}",
         "description": query_id,
         "image": input,
-        "attributes": [{[{"trait_type":"query","value":f"{input}"}]
+        "attributes": [{"trait_type":"query","value":f"{input}"},{"trait_type":"response","value":f"{response}"}]
     }
 
     with open(f"./assets/json/{query_id}.json", "w") as outfile:
