@@ -4,6 +4,8 @@ from textwrap3 import wrap
 import nltk
 import os
 import json 
+from pinatapy import PinataPy
+from dotenv import load_dotenv
 
 NFTENSOR_DESCRIPTION = """NFTensor Text is a generative art project that generates NFTs from the first sentence of the Bittensor network's response to minter queries""" 
 
@@ -76,7 +78,12 @@ def image_exists(query_id):
     return os.path.isfile(f"./assets/imgs/out/{query_id}.png")
 
 def upload_image(query_id):
-    pass
+    load_dotenv()
+    api_key = os.getenv('key')
+    secret = os.getenv('secret')
+    img = open(f"./assets/json/{query_id}.json", "r")
+    pinata = PinataPy(pinata_api_key=api_key, pinata_secret_api_key=secret)
+    pinata.pin_file_to_ipfs(img)
 
 def generate_json(query_id, input):
     
