@@ -94,12 +94,12 @@ def upload_image(query_id) -> str:
     img = open(image_path, "r")
     print(api_key)
     print(secret)
-    pinata = PinataPy(pinata_api_key=api_key, pinata_secret_api_key=secret)
-    pinata_response =  pinata.pin_file_to_ipfs(image_path)
+    pinata = PinataPy(pinata_api_key=api_key, pinata_secret_api_key=secret )
+    pinata_response =  pinata.pin_file_to_ipfs(image_path, save_absolute_paths=False)
     print(pinata_response)
     return pinata_response['IpfsHash']
 
-def generate_json(query_id, image_hash, response):
+def generate_json(query_id, image_hash, input, response):
     
     json_metadata = {
         "name": f"NFTensor Text #{query_id}",
