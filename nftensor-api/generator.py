@@ -19,7 +19,7 @@ def generate_image(input, query_id):
         pass
     
     first_sentence = get_first_sentence(resp)
-    img = Image.open("./assets/imgs/base/background_tao_right.png")
+    img = Image.open("./assets/imgs/base/background_4k.png")
     draw = ImageDraw.Draw(img)
     width, height = img.size
     x = width // 2
