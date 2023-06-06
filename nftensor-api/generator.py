@@ -24,7 +24,7 @@ def generate_image(input, query_id):
     width, height = img.size
     x = width // 2
     y = height // 2
-    max_font_size = 20
+    max_font_size = 200
     
     text_color = (255, 255, 255)
     
