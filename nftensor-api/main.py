@@ -3,7 +3,6 @@ import fetcher
 import os
 import dotenv 
 
-
 def main():
     # load .env
     dotenv.load_dotenv()   
