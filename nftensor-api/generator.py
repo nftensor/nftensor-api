@@ -18,7 +18,7 @@ def generate_image(input, query_id):
     except:
         pass
     
-    first_sentence = get_first_sentence(resp)
+    output = get_first_sentence(resp)
     img = Image.open("./assets/imgs/base/background_4k.png")
     draw = ImageDraw.Draw(img)
     width, height = img.size
@@ -34,7 +34,7 @@ def generate_image(input, query_id):
     
     while font_size > 0:
         font = ImageFont.truetype("./assets/fonts/EBGaramond-Regular.ttf", font_size)
-        wrapped_text = wrap(first_sentence, width=int(width * 1.5 / font_size), break_long_words=False)
+        wrapped_text = wrap(output, width=int(width * 1.5 / font_size), break_long_words=False)
         line_heights = [draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] for line in wrapped_text]
         max_line_height = max(line_heights)
         total_height = sum(line_heights) + int((len(wrapped_text) - 1) * max_line_height * (line_spacing - 1))
@@ -64,8 +64,8 @@ def generate_image(input, query_id):
             logger.debug(f"failed to generate image for query #{query_id}")
         else: 
             logger.info(f"successfully generated image for query #{query_id}")
-            generate_json(query_id, input, first_sentence)
-            upload_image(query_id)
+            img_hash = upload_image(query_id)
+            generate_json(query_id, img_hash, input, output)
 
 
     
@@ -86,7 +86,7 @@ def get_first_sentence(text):
 def image_exists(query_id):
     return os.path.isfile(f"./assets/imgs/out/{query_id}.png")
 
-def upload_image(query_id):
+def upload_image(query_id) -> str:
     load_dotenv()
     api_key = os.getenv('PINATA_API_KEY')
     secret = os.getenv('PINATA_API_SECRET_KEY')
@@ -97,14 +97,14 @@ def upload_image(query_id):
     pinata = PinataPy(pinata_api_key=api_key, pinata_secret_api_key=secret)
     pinata_response =  pinata.pin_file_to_ipfs(image_path)
     print(pinata_response)
-    return pinata_response
+    return pinata_response['IpfsHash']
 
-def generate_json(query_id, input, response):
+def generate_json(query_id, image_hash, response):
     
     json_metadata = {
         "name": f"NFTensor Text #{query_id}",
         "description": query_id,
-        "image": input,
+        "image": f"ipfs://{image_hash}",
         "attributes": [{"trait_type":"query","value":f"{input}"},{"trait_type":"response","value":f"{response}"}]
     }
 
