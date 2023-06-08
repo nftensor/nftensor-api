@@ -23,17 +23,23 @@ def fetch_queries(endpoint, nftensor_address):
 
         if time.time() - start_time > 500:
             check_for_mints()
-            start_time = time.time()s
+            start_time = time.time()
 
  
 def check_for_mints(): 
     # get a singular query 
     for i in range(1, 501):
         query = contract.functions.queries(i).call()
-        if query != "" and not generator.image_exists(i):
-            generator.generate_image(query, i)
+        if generator.image_exists(i):
+            if query != "":
+                logger.info(f"new query found, re-generating image #{i}")
+                generator.generate_image(query, i)
         else:
-            logger.info("no new queries found")
+            with open("./assets/json/{i}.json", "r") as f:
+                data = json.load(f)
+                if query != data["attributes"][0]["value"]:
+                    logger.warn("re-org found, re-generating image")
+                    generator.generate_image(query, i)
 
         
 def handle_event(provider, event):
