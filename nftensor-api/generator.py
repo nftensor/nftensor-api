@@ -11,14 +11,17 @@ from loguru import logger
 NFTENSOR_DESCRIPTION = """NFTensor Text is a generative art project that generates NFTs from the first sentence of the Bittensor network's response to minter queries""" 
 
 
-def generate_image(input, query_id):
+def generate_response(input):
     try: 
-        # query bittensor with user input 
+            # query bittensor with user input 
         resp = bt.prompt( input, hotkey = "5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3")
     except:
         pass
-    
-    output = get_first_sentence(resp)
+    return resp
+
+def generate_image(query, query_id):
+    response = generate_response(query)
+    short_response = get_first_sentence(response)
     img = Image.open("./assets/imgs/base/background_4k.png")
     draw = ImageDraw.Draw(img)
     width, height = img.size
@@ -34,7 +37,7 @@ def generate_image(input, query_id):
     
     while font_size > 0:
         font = ImageFont.truetype("./assets/fonts/EBGaramond-Regular.ttf", font_size)
-        wrapped_text = wrap(output, width=int(width * 1.5 / font_size), break_long_words=False)
+        wrapped_text = wrap(short_response, width=int(width * 1.5 / font_size), break_long_words=False)
         line_heights = [draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] for line in wrapped_text]
         max_line_height = max(line_heights)
         total_height = sum(line_heights) + int((len(wrapped_text) - 1) * max_line_height * (line_spacing - 1))
@@ -58,18 +61,18 @@ def generate_image(input, query_id):
             line_height = line_bbox[3] - line_bbox[1]
             draw.text((x - line_width // 2, y), line, fill=text_color, font=font)
             y += int(max_line_height * line_spacing)
-    
-        img.save(f"./assets/imgs/out/{query_id}.png")
-        if not image_exists(query_id):
-            logger.debug(f"failed to generate image for query #{query_id}")
-        else: 
-            logger.info(f"successfully generated image for query #{query_id}")
-            img_hash = upload_image(query_id)
-            generate_json(query_id, img_hash, input, output)
+
+        save_image(img, query_id, query, short_response)
 
 
-    
-
+def save_image(image, query_id, input, output):
+    image.save(f"./assets/imgs/out/{query_id}.png")
+    if not image_exists(query_id):
+        logger.debug(f"failed to generate image for query #{query_id}")
+    else: 
+        logger.info(f"successfully generated image for query #{query_id}")
+        img_hash = upload_image(query_id)
+        generate_json(query_id, img_hash, input, output)
     
     
 def get_first_sentence(text):
@@ -110,11 +113,3 @@ def generate_json(query_id, image_hash, input, response):
 
     with open(f"./assets/json/{query_id}.json", "w") as outfile:
         json.dump(json_metadata, outfile)
-
-
-
-
-
-
-
-
