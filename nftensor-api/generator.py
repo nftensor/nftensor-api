@@ -20,9 +20,10 @@ def generate_response(input):
     return resp
 
 def generate_image(query, query_id):
-    response = generate_response(query)
-    short_response = get_first_sentence(response)
-    img = Image.open("./assets/imgs/base/background_4k.png")
+    #response = generate_response(query)
+    #short_response = get_first_sentence(response)
+    short_response = "a young couple strolled hand in hand, their fingers delicately entwined, their laughter resonating through the crisp autumn air"
+    img = Image.open("../assets/imgs/base/background_4k.png")
     draw = ImageDraw.Draw(img)
     width, height = img.size
     x = width // 2
@@ -36,7 +37,7 @@ def generate_image(query, query_id):
     line_spacing = 1.5
     
     while font_size > 0:
-        font = ImageFont.truetype("./assets/fonts/EBGaramond-Regular.ttf", font_size)
+        font = ImageFont.truetype("../assets/fonts/EBGaramond-Regular.ttf", font_size)
         wrapped_text = wrap(short_response, width=int(width * 1.5 / font_size), break_long_words=False)
         line_heights = [draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] for line in wrapped_text]
         max_line_height = max(line_heights)
@@ -66,7 +67,7 @@ def generate_image(query, query_id):
 
 
 def save_image(image, query_id, input, output):
-    image.save(f"./assets/imgs/out/{query_id}.png")
+    image.save(f"../assets/imgs/out/{query_id}.png")
     if not image_exists(query_id):
         logger.debug(f"failed to generate image for query #{query_id}")
     else: 
@@ -87,13 +88,13 @@ def get_first_sentence(text):
 
 
 def image_exists(query_id):
-    return os.path.isfile(f"./assets/imgs/out/{query_id}.png")
+    return os.path.isfile(f"../assets/imgs/out/{query_id}.png")
 
 def upload_image(query_id) -> str:
     load_dotenv()
     api_key = os.getenv('PINATA_API_KEY')
     secret = os.getenv('PINATA_API_SECRET_KEY')
-    image_path = os.path.abspath(f"./assets/imgs/out/{query_id}.png")
+    image_path = os.path.abspath(f"../assets/imgs/out/{query_id}.png")
     img = open(image_path, "r")
     print(api_key)
     print(secret)
@@ -111,5 +112,5 @@ def generate_json(query_id, image_hash, input, response):
         "attributes": [{"trait_type":"query","value":f"{input}"},{"trait_type":"response","value":f"{response}"}]
     }
 
-    with open(f"./assets/json/{query_id}.json", "w") as outfile:
+    with open(f"../assets/json/{query_id}.json", "w") as outfile:
         json.dump(json_metadata, outfile)
