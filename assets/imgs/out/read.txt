@@ -1,0 +1,1 @@
+we removed this but it must exist for python to write to before uploading the image to ipfs
