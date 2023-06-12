@@ -1,14 +1,14 @@
 import os
 from pinatapy import PinataPy
-import json 
+import json
 
 IMAGE_OUT_PATH = "./assets/imgs/out/"
 METADATA_OUT_PATH = "./assets/json/"
 
 
-# handle upload to ipfs 
+# handle upload to ipfs
 def upload_image(query_id):
-    # load pinata api keys 
+    # load pinata api keys
     load_dotenv()
     api_key = os.getenv("PINATA_API_KEY")
     secret = os.getenv("PINATA_API_SECRET_KEY")
@@ -23,6 +23,7 @@ def upload_image(query_id):
 
     # return ipfs hash
     return pinata_response["IpfsHash"]
+
 
 # handle creation of json metadata files
 def generate_json(query_id, description, image_hash, input, response):
@@ -39,6 +40,7 @@ def generate_json(query_id, description, image_hash, input, response):
     with open(METADATA_OUT_PATH + f"{query_id}.json", "w") as outfile:
         json.dump(json_metadata, outfile)
 
+
 def get_base_image_path():
     return "./assets/imgs/base/background_4k.png"
 
@@ -47,18 +49,20 @@ def get_font_path():
     return "./assets/fonts/EBGaramond-Regular.ttf"
 
 
-# check file exists 
+# check file exists
 def image_exists(query_id):
     return os.path.isfile(IMAGE_OUT_PATH + f"{query_id}.png")
 
-# handle removal of created files 
+
+# handle removal of created files
 def remove_image(query_id):
     os.remove(IMAGE_OUT_PATH + f"{query_id}.png")
+
 
 def remove_metadata(query_id):
     os.remove(METADATA_OUT_PATH + f"{query_id}.json")
 
+
 def cleanup(query_id):
     remove_image(query_id)
     remove_metadata(query_id)
-
