@@ -1,6 +1,7 @@
 import os
 from pinatapy import PinataPy
 import json
+import dotenv
 
 IMAGE_OUT_PATH = "./assets/imgs/out/"
 METADATA_OUT_PATH = "./assets/json/"
@@ -9,7 +10,7 @@ METADATA_OUT_PATH = "./assets/json/"
 # handle upload to ipfs
 def upload_image(query_id):
     # load pinata api keys
-    load_dotenv()
+    dotenv.load_dotenv()
     api_key = os.getenv("PINATA_API_KEY")
     secret = os.getenv("PINATA_API_SECRET_KEY")
 

@@ -5,15 +5,16 @@ import nltk
 import os
 import json
 from pinatapy import PinataPy
-from dotenv import load_dotenv
+import dotenv
 from loguru import logger
+import files
 
 NFTENSOR_DESCRIPTION = """NFTensor Text is a generative art project that generates NFTs from the first sentence of the Bittensor network's response to minter queries"""
 
 
 def query_bittensor(input):
     # load the ss58 prefix from the .env files
-    load_dotenv()
+    dotenv.load_dotenv()
     ss58 = os.getenv("BITTENSOR_SS58")
 
     try:
@@ -30,9 +31,8 @@ def query_bittensor(input):
 
 def generate_image(query, query_id):
     # query bittensor and grab the first sentence of the response
-    response = query_bittensor(query)
     response = query_bittensor(input, query_id)
-    if resp == "":
+    if response == "":
         return
     short_response = get_first_sentence(response)
 
@@ -48,6 +48,9 @@ def generate_image(query, query_id):
     font = None
     font_size = max_font_size
     line_spacing = 1.5
+
+    if len(short_response) > 325:
+        short_response = text[:325]
 
     while font_size > 0:
         font = ImageFont.truetype(files.get_font_path(), font_size)
@@ -71,8 +74,7 @@ def generate_image(query, query_id):
 
     if font is None:
         logger.error("text length exceeds maximum font size")
-        # add error handling
-        # what should we do here?
+        return
     else:
         total_height = sum(line_heights) + int(
             (len(wrapped_text) - 1) * max_line_height * (line_spacing - 1)
@@ -97,12 +99,7 @@ def save_image(image, query_id, input, output):
         return
     else:
         logger.info(f"successfully generated image for query #{query_id}")
-        try:
-            img_hash = files.upload_image(query_id)
-        except:
-            files.cleanup(query_id)
-            return
-
+        img_hash = files.upload_image(query_id)
         files.generate_json(query_id, NFTENSOR_DESCRIPTION, img_hash, input, output)
 
 
