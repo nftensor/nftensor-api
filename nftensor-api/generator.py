@@ -98,7 +98,7 @@ def draw_image(short_response):
 
 
 def save_image(image, query_id, input, output):
-    image.save(f"./assets/imgs/out/{query_id}.png")
+    image.save(files.IMAGE_OUT_PATH + f"{query_id}.png")
     if not files.image_exists(query_id):
         logger.debug(f"failed to generate image for query #{query_id}")
         files.cleanup(query_id)

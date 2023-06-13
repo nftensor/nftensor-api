@@ -8,8 +8,7 @@ import time
 # fetches queries from the NFTensor contract
 def fetch_queries(endpoint, nftensor_address):
     # connect to the blockchain
-    # w3 = Web3(Web3.HTTPProvider(endpoint))
-    w3 = Web3(Web3.WebsocketProvider("ws://localhost:8545"))
+    w3 = Web3(Web3.WebsocketProvider(endpoint))
     # get the contract
     contract = w3.eth.contract(address=nftensor_address, abi=abi.nftensor_abi)
     event_filter = contract.events.Transfer.createFilter(fromBlock="latest")
@@ -35,7 +34,7 @@ def check_for_mints():
                 logger.info(f"new query found, re-generating image #{i}")
                 generator.generate_image(query, i)
         else:
-            with open("./assets/json/{i}.json", "r") as f:
+            with open(f"/execute/assets/json/{i}", "r") as f:
                 data = json.load(f)
                 if query != data["attributes"][0]["value"]:
                     logger.warn("re-org found, re-generating image")
