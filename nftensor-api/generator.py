@@ -8,11 +8,13 @@ from pinatapy import PinataPy
 import dotenv
 from loguru import logger
 import files
+import sys
 
 NFTENSOR_DESCRIPTION = """NFTensor Text is a generative art project that generates NFTs from the first sentence of the Bittensor network's response to minter queries"""
 
 def generate(query, query_id):
     print(f"query is {query}")
+    print(query_id)
     response = query_bittensor(query)
     print(f"response is {response}")
     short_response = get_first_sentence(response)
@@ -24,7 +26,7 @@ def query_bittensor(input):
     # load the ss58 prefix from the .env files
     dotenv.load_dotenv()
     ss58 = os.getenv("BITTENSOR_SS58")
-
+    print("loaded everything")
     """
     try:
         resp = bt.prompt(input, hotkey=ss58)
@@ -32,10 +34,14 @@ def query_bittensor(input):
         logger.warning("failed to query bittensor")
         resp = None
     """
+    ("querying bittensor")
     resp = bt.prompt(input)
+    print("resp")
     if resp is not None:
+        print("resp is not none")
         return resp
     else:
+        print("resp is one")
         return query_bittensor(input)
 
 def draw_image(short_response):
@@ -98,6 +104,8 @@ def draw_image(short_response):
 
 
 def save_image(image, query_id, input, output):
+    logger.remove()
+    logger.add(sys.stdout)
     image.save(files.IMAGE_OUT_PATH + f"{query_id}.png")
     if not files.image_exists(query_id):
         logger.debug(f"failed to generate image for query #{query_id}")

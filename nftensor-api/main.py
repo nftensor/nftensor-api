@@ -2,7 +2,7 @@ import generator
 import fetcher
 import os
 import dotenv
-from logguru import logger
+from loguru import logger
 
 
 def main():
