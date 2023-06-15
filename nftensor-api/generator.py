@@ -11,31 +11,34 @@ import files
 
 NFTENSOR_DESCRIPTION = """NFTensor Text is a generative art project that generates NFTs from the first sentence of the Bittensor network's response to minter queries"""
 
+def generate(query, query_id):
+    print(f"query is {query}")
+    response = query_bittensor(query)
+    print(f"response is {response}")
+    short_response = get_first_sentence(response)
+    print(f"short response is {short_response}")
+    image = draw_image(short_response)
+    save_image(image, query_id, query, short_response)
 
 def query_bittensor(input):
     # load the ss58 prefix from the .env files
     dotenv.load_dotenv()
     ss58 = os.getenv("BITTENSOR_SS58")
 
+    """
     try:
         resp = bt.prompt(input, hotkey=ss58)
     except:
-        logger.warn("failed to query bittensor")
+        logger.warning("failed to query bittensor")
         resp = None
-
+    """
+    resp = bt.prompt(input)
     if resp is not None:
         return resp
     else:
-        return ""
+        return query_bittensor(input)
 
-
-def generate_image(query, query_id):
-    # query bittensor and grab the first sentence of the response
-    response = query_bittensor(input, query_id)
-    if response == "":
-        return
-    short_response = get_first_sentence(response)
-
+def draw_image(short_response):
     img = Image.open(files.get_base_image_path())
     draw = ImageDraw.Draw(img)
     width, height = img.size
@@ -48,10 +51,11 @@ def generate_image(query, query_id):
     font = None
     font_size = max_font_size
     line_spacing = 1.5
-
+    
     if len(short_response) > 325:
-        short_response = text[:325]
+        short_response = short_response[:325]
 
+    print(short_response)
     while font_size > 0:
         font = ImageFont.truetype(files.get_font_path(), font_size)
         wrapped_text = wrap(
@@ -62,6 +66,7 @@ def generate_image(query, query_id):
             - draw.textbbox((0, 0), line, font=font)[1]
             for line in wrapped_text
         ]
+        print(line_heights)
         max_line_height = max(line_heights)
         total_height = sum(line_heights) + int(
             (len(wrapped_text) - 1) * max_line_height * (line_spacing - 1)
@@ -88,12 +93,13 @@ def generate_image(query, query_id):
             draw.text((x - line_width // 2, y), line, fill=text_color, font=font)
             y += int(max_line_height * line_spacing)
 
-        save_image(img, query_id, query, short_response)
+        return img
+        #save_image(img, query_id, query, short_response)
 
 
 def save_image(image, query_id, input, output):
-    image.save(f"./assets/imgs/out/{query_id}.png")
-    if not image_exists(query_id):
+    image.save(files.IMAGE_OUT_PATH + f"{query_id}.png")
+    if not files.image_exists(query_id):
         logger.debug(f"failed to generate image for query #{query_id}")
         files.cleanup(query_id)
         return

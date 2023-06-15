@@ -3,8 +3,8 @@ from pinatapy import PinataPy
 import json
 import dotenv
 
-IMAGE_OUT_PATH = "./assets/imgs/out/"
-METADATA_OUT_PATH = "./assets/json/"
+IMAGE_OUT_PATH = "/execute/assets/imgs/out/"
+METADATA_OUT_PATH = "/execute/assets/json/"
 
 
 # handle upload to ipfs
@@ -38,16 +38,16 @@ def generate_json(query_id, description, image_hash, input, response):
         ],
     }
 
-    with open(METADATA_OUT_PATH + f"{query_id}.json", "w") as outfile:
+    with open(METADATA_OUT_PATH + f"{query_id}", "w") as outfile:
         json.dump(json_metadata, outfile)
 
 
 def get_base_image_path():
-    return "./assets/imgs/base/background_4k.png"
+    return "/execute/assets/imgs/base/background_4k.png"
 
 
 def get_font_path():
-    return "./assets/fonts/EBGaramond-Regular.ttf"
+    return "/execute/assets/fonts/EBGaramond-Regular.ttf"
 
 
 # check file exists
@@ -61,7 +61,7 @@ def remove_image(query_id):
 
 
 def remove_metadata(query_id):
-    os.remove(METADATA_OUT_PATH + f"{query_id}.json")
+    os.remove(METADATA_OUT_PATH + f"{query_id}")
 
 
 def cleanup(query_id):
