@@ -9,34 +9,29 @@ import sys
 NFTENSOR_DESCRIPTION = """NFTensor Text is a generative art project that generates NFTs from the first sentence of the Bittensor network's response to minter queries."""
 
 def generate(query, query_id):
-    print(f"query is {query}")
-    print(query_id)
-    response = query_bittensor(query)
-    print(f"response is {response}")
+    print(f"query id is {query_id}")
+    response = query_bittensor(query,query_id)
     short_response = get_first_sentence(response)
-    print(f"short response is {short_response}")
     image = draw_image(short_response)
     save_image(image, query_id, query, short_response)
+    print(f"image number {query_id} is saved")
 
-def query_bittensor(input):
+def query_bittensor(input,query_id):
     # load the ss58 prefix from the .env files
-    print("loaded everything")
-    """
-    try:
-        resp = bt.prompt(input, hotkey=ss58)
-    except:
-        logger.warning("failed to query bittensor")
-        resp = None
-    """
-    ("querying bittensor")
+    print(f"querying bittensor for number {query_id}")
     resp = bt.prompt(input)
-    print("resp")
-    if resp is not None:
-        print("resp is not none")
+    print(resp)
+    if resp is not None and resp != "":
+        print(f"resp is not none for {query_id}")
+        print(f"resp is{resp}for {query_id}")
         return resp
     else:
-        print("resp is one")
+        return query_bittensor(input,query_id)
+    """
+    else:
+        print("No response what on Earth happened")
         return query_bittensor(input)
+    """
 
 def draw_image(short_response):
     img = Image.open(files.get_base_image_path())
@@ -107,7 +102,6 @@ def save_image(image, query_id, input, output):
     else:
         logger.info(f"successfully generated image for query #{query_id}")
         files.generate_json(query_id, NFTENSOR_DESCRIPTION, input, output)
-
 
 def get_first_sentence(text):
     # Tokenize the text into sentences
