@@ -20,7 +20,8 @@ def fetch_queries(endpoint, nftensor_address):
         events = event_filter.get_new_entries()
         for event in events:
             print(event)
-            handle_event(w3, contract, event)
+            if event.args["from"] == "0x0000000000000000000000000000000000000000":
+                handle_event(w3, contract, event)
 
         if time.time() - start_time > 500:
             check_for_mints(contract)
@@ -54,7 +55,5 @@ def handle_event(provider, contract, event):
     txn_hash = provider.eth.waitForTransactionReceipt(event["transactionHash"])
     # check if the sender is 0 
     print(txn_hash)
-    if txn_hash["from"] == "0x0000000000000000000000000000000000000000":
-        # mint event
-        id = contract.functions.tokenID().call() 
-        handle_mint(contract, id)
+    id = contract.functions.tokenID().call() 
+    handle_mint(contract, id)
