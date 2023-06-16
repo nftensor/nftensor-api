@@ -19,6 +19,7 @@ def fetch_queries(endpoint, nftensor_address):
     while True:
         events = event_filter.get_new_entries()
         for event in events:
+            print(event)
             handle_event(w3, contract, event)
 
         if time.time() - start_time > 500:
