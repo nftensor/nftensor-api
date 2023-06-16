@@ -2,10 +2,6 @@ import bittensor as bt
 from PIL import Image, ImageDraw, ImageFont, ImageColor
 from textwrap3 import wrap
 import nltk
-import os
-import json
-from pinatapy import PinataPy
-import dotenv
 from loguru import logger
 import files
 import sys
@@ -24,8 +20,6 @@ def generate(query, query_id):
 
 def query_bittensor(input):
     # load the ss58 prefix from the .env files
-    dotenv.load_dotenv()
-    ss58 = os.getenv("BITTENSOR_SS58")
     print("loaded everything")
     """
     try:
@@ -100,7 +94,6 @@ def draw_image(short_response):
             y += int(max_line_height * line_spacing)
 
         return img
-        #save_image(img, query_id, query, short_response)
 
 
 def save_image(image, query_id, input, output):
@@ -113,8 +106,7 @@ def save_image(image, query_id, input, output):
         return
     else:
         logger.info(f"successfully generated image for query #{query_id}")
-        img_hash = files.upload_image(query_id)
-        files.generate_json(query_id, NFTENSOR_DESCRIPTION, img_hash, input, output)
+        files.generate_json(query_id, NFTENSOR_DESCRIPTION, input, output)
 
 
 def get_first_sentence(text):

@@ -1,37 +1,16 @@
 import os
-from pinatapy import PinataPy
 import json
-import dotenv
-
 IMAGE_OUT_PATH = "/execute/assets/imgs/out/"
 METADATA_OUT_PATH = "/execute/assets/json/"
 
 
-# handle upload to ipfs
-def upload_image(query_id):
-    # load pinata api keys
-    dotenv.load_dotenv()
-    api_key = os.getenv("PINATA_API_KEY")
-    secret = os.getenv("PINATA_API_SECRET_KEY")
-
-    # open image to upload
-    image_path = os.path.abspath(IMAGE_OUT_PATH + f"{query_id}.png")
-    img = open(image_path, "r")
-
-    # create pinata instance and upload to pinata
-    pinata = PinataPy(pinata_api_key=api_key, pinata_secret_api_key=secret)
-    pinata_response = pinata.pin_file_to_ipfs(image_path, save_absolute_paths=False)
-
-    # return ipfs hash
-    return pinata_response["IpfsHash"]
-
 
 # handle creation of json metadata files
-def generate_json(query_id, description, image_hash, input, response):
+def generate_json(query_id, description, input, response):
     json_metadata = {
         "name": f"NFTensor Text #{query_id}",
         "description": description,
-        "image": f"ipfs://{image_hash}",
+        "image": f"https://text.nftensor.com/images/{query_id}.png",
         "attributes": [
             {"trait_type": "query", "value": f"{input}"},
             {"trait_type": "response", "value": f"{response}"},
@@ -40,7 +19,6 @@ def generate_json(query_id, description, image_hash, input, response):
 
     with open(METADATA_OUT_PATH + f"{query_id}", "w") as outfile:
         json.dump(json_metadata, outfile)
-
 
 def get_base_image_path():
     return "/execute/assets/imgs/base/background_4k.png"
