@@ -10,7 +10,7 @@ from loguru import logger
 import files
 import sys
 
-NFTENSOR_DESCRIPTION = """NFTensor Text is a generative art project that generates NFTs from the first sentence of the Bittensor network's response to minter queries"""
+NFTENSOR_DESCRIPTION = """NFTensor Text is a generative art project that generates NFTs from the first sentence of the Bittensor network's response to minter queries."""
 
 def generate(query, query_id):
     print(f"query is {query}")
