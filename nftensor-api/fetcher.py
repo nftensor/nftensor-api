@@ -53,5 +53,7 @@ def handle_event(provider, contract, event):
     txn_hash = provider.eth.waitForTransactionReceipt(event["transactionHash"])
     # check if the sender is 0 
     print(txn_hash)
-    id = contract.functions.tokenID().call() 
-    handle_mint(contract, id)
+    if txn_hash["from"] == "0x0000000000000000000000000000000000000000":
+        # mint event
+        id = contract.functions.tokenID().call() 
+        handle_mint(contract, id)
