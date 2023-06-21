@@ -13,20 +13,11 @@ def fetch_queries(endpoint, nftensor_address):
     w3 = Web3(Web3.WebsocketProvider(endpoint))
     # get the contract
     contract = w3.eth.contract(address=nftensor_address, abi=abi.nftensor_abi)
-    event_filter = contract.events.Transfer.createFilter(fromBlock="latest")
 
-    start_time = time.time()
     while True:
-        events = event_filter.get_new_entries()
-        for event in events:
-            print(event)
-            if event.args["from"] == "0x0000000000000000000000000000000000000000":
-                handle_event(w3, contract, event)
 
-        if time.time() - start_time > 500:
-            check_for_mints(contract)
-            start_time = time.time()
-
+        check_for_mints(contract)
+        time.sleep(30)
 
 def check_for_mints(contract):
     # get a singular query
@@ -50,10 +41,3 @@ def handle_mint(contract, id):
             else:
                 logger.warn("image exists, but json not generated, cleaning up for retry")
                 files.cleanup(id)
-
-def handle_event(provider, contract, event):
-    txn_hash = provider.eth.waitForTransactionReceipt(event["transactionHash"])
-    # check if the sender is 0 
-    print(txn_hash)
-    id = contract.functions.tokenID().call() 
-    handle_mint(contract, id)
