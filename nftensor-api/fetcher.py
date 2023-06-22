@@ -17,7 +17,7 @@ def fetch_queries(endpoint, nftensor_address):
     while True:
 
         check_for_mints(contract)
-        time.sleep(30)
+        time.sleep(12)
 
 def check_for_mints(contract):
     # get a singular query
