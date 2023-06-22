@@ -17,6 +17,7 @@ def fetch_queries(endpoint, nftensor_address):
     while True:
 
         check_for_mints(contract)
+        print("checked for mints")
 
 def check_for_mints(contract):
     # get a singular query
@@ -27,10 +28,9 @@ def handle_mint(contract, id):
     query = contract.functions.queries(id).call()
     if query != "":
         if not files.image_exists(id):
-                logger.info(f"new query found, re-generating image #{id}")
+                logger.info(f"new query found, generating image #{id}")
                 generator.generate(query, id)
         else:
-            # we have to fix this
             if files.json_exists(id):
                 with open(f"/execute/assets/json/{id}", "r") as f:
                     data = json.load(f)
