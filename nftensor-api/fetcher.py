@@ -17,7 +17,6 @@ def fetch_queries(endpoint, nftensor_address):
     while True:
 
         check_for_mints(contract)
-        time.sleep(12)
 
 def check_for_mints(contract):
     # get a singular query
@@ -25,9 +24,9 @@ def check_for_mints(contract):
         handle_mint(contract, i)
 
 def handle_mint(contract, id):
-        query = contract.functions.queries(id).call()
+    query = contract.functions.queries(id).call()
+    if query != "":
         if not files.image_exists(id):
-            if query != "":
                 logger.info(f"new query found, re-generating image #{id}")
                 generator.generate(query, id)
         else:
