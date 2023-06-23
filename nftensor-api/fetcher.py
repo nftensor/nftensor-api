@@ -13,16 +13,18 @@ def fetch_queries(endpoint, nftensor_address):
     w3 = Web3(Web3.WebsocketProvider(endpoint))
     # get the contract
     contract = w3.eth.contract(address=nftensor_address, abi=abi.nftensor_abi)
-
+    last_minted = 0
     while True:
-
-        check_for_mints(contract)
+        
+        check_for_mints(last_minted, contract)
         print("checked for mints")
 
-def check_for_mints(contract):
+def check_for_mints(last_minted, contract):
     # get a singular query
-    for i in range(1, 501):
-        handle_mint(contract, i)
+    current_token_id = contract.functions.tokenID().call()
+    if current_token_id > last_minted:
+        for id in range(last_minted + 1, current_token_id + 1):
+            handle_mint(contract, id)
 
 def handle_mint(contract, id):
     query = contract.functions.queries(id).call()
