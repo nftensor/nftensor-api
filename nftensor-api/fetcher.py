@@ -25,9 +25,10 @@ def fetch_queries(endpoint, nftensor_address):
             # Your code to execute every 30 minutes goes here
             # For example:
             print("30 minutes have passed checking for re-orgs")
-    
+            for i in range(1, last_minted + 1):
+                handle_mint(contract, i)
             # Update the last execution time
-            last_time = current_time
+            last_time = time.time()
 
 
 def get_last_minted():
