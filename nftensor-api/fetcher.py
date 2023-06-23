@@ -13,11 +13,19 @@ def fetch_queries(endpoint, nftensor_address):
     w3 = Web3(Web3.WebsocketProvider(endpoint))
     # get the contract
     contract = w3.eth.contract(address=nftensor_address, abi=abi.nftensor_abi)
-    last_minted = 0
+    last_minted = get_last_minted()
     while True:
         
         check_for_mints(last_minted, contract)
         print("checked for mints")
+
+
+def get_last_minted():
+    last_minted = 0
+    while files.image_exists(last_minted):
+        last_minted += 1
+
+    return last_minted
 
 def check_for_mints(last_minted, contract):
     # get a singular query
