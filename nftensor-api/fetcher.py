@@ -14,10 +14,20 @@ def fetch_queries(endpoint, nftensor_address):
     # get the contract
     contract = w3.eth.contract(address=nftensor_address, abi=abi.nftensor_abi)
     last_minted = get_last_minted()
+    last_time = time.time()
     while True:
         
         check_for_mints(last_minted, contract)
         print("checked for mints")
+        current_time = time.time()
+           # Check if 30 minutes (1800 seconds) have passed
+        if current_time - last_time >= 1800:
+            # Your code to execute every 30 minutes goes here
+            # For example:
+            print("30 minutes have passed checking for re-orgs")
+    
+            # Update the last execution time
+            last_time = current_time
 
 
 def get_last_minted():
